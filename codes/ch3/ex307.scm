@@ -35,6 +35,8 @@
 			   act )))))
   dispatch)
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;; test
 (define acc (make-account 100 'hello))
 ((acc 'hello 'withdraw) 40)
 ((acc 'hi 'withdraw) 30)

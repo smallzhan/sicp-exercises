@@ -41,7 +41,11 @@
 (define get (operation-table 'lookup-proc))
 (define put (operation-table 'insert-proc!))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(define (same-variable? x y)
+  (and (variable? x) (variable? y) (eq? x y)))
 
+(define (variable? x)
+  (symbol? x))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; a.将每一种类型的 deriv 操作安装到了对应类型下。
 ;; 无法分派的原因是没有对应的“类型标志”
@@ -172,3 +176,87 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;d. 这个只要修改 put 部分，将前面两个参数符号反过来就行了。
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;数据导向的递归方式, 实现方式更加简洁
+;;;;;;;;;;;;;;;;通过外部过程 deriv2 进行递归，不需要考虑内部具体结构
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (install-deriv2-package)
+  (define (=number? x y)
+    (and (number? x) (number? y) (= x y)))
+
+  (define (make-sum a1 a2)
+    (cond ((=number? a1 0) a2)
+          ((=number? a2 0) a1)
+          ((and (number? a1) (number? a2)) (+ a1 a2))
+          (else (list '+ a1 a2))))
+
+  (define (make-product m1 m2)
+    (cond ((or (=number? m1 0) (=number? m2 0)) 0)
+          ((=number? m1 1) m2)
+          ((=number? m2 1) m1)
+          ((and (number? m1) (number? m2)) (* m1 m2))
+          (else (list '* m1 m2))))
+
+  (define (make-exp b e)
+    (cond ((=number? b 1) 1)
+          ((=number? b 0) 0)
+          ((=number? e 0) 1)
+          ((and (number? b) (number? e)) (exp b e))
+          (else (list '^ b e))))
+
+  (define (deriv-sum args var)
+    (let ((arg1 (car args))
+          (arg2 (cadr args)))
+      (display arg1)
+      (display "---")
+      (display arg2)
+      (newline)
+      (make-sum (deriv2 arg1 var)
+                (deriv2 arg2 var))))
+
+ (define (deriv-product args var)
+    (let ((arg1 (car args))
+          (arg2 (cadr args)))
+      (make-sum
+       (make-product
+        arg2
+        (deriv2 arg1 var))
+       (make-product
+        arg1
+        (deriv2 arg2 var)))))
+
+  (define (deriv-expm args var)
+    (let ((arg1 (car args))
+          (arg2 (cadr args)))
+      (make-product
+       (make-product arg2
+                     (make-exp arg1 (- arg2 1)))
+       (deriv2 arg1 var))))
+
+  (put 'deriv2 '+ deriv-sum)
+  (put 'deriv2 '* deriv-product)
+  (put 'deriv2 '^ deriv-expm)
+  'done)
+
+(define (deriv2 exp var)
+  (cond ((number? exp) 0)
+        ((variable? exp)
+         (if (same-variable? exp var) 1 0))
+        (else
+         ((get 'deriv2 (operator exp))
+          (operands exp)
+          var))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;; tests
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(install-deriv2-package)
+
+(deriv2 '(* x (^ x 3)) 'x)
+(deriv2 '(+ x 3) 'x)
+(deriv2 '(+ x (+ x 3)) 'x)
