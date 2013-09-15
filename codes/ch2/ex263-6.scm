@@ -98,21 +98,16 @@
 ;;;;;;;;;;;;;;;; ex2.65
 
 (define (union-set set1 set2)
-  (cond ((null? set1) set2)
-        ((null? set2) set1)
-        (else
-         (let ((list1 (tree->list-2 set1))
-               (list2 (tree->list-2 set2)))
-           (let ((list12 (union-set-list list1 list2)))
-             (list->tree list12))))))
+  (let ((list1 (tree->list-2 set1))
+		(list2 (tree->list-2 set2)))
+	(let ((list12 (union-set-list list1 list2)))
+	  (list->tree list12))))
 
 (define (intersection-set set1 set2)
-  (if (or (null? set1) (null? set2))
-      '()
-      (let ((list1 (tree->list-2 set1))
-            (list2 (tree->list-2 set2)))
-        (let ((list12 (intersection-set-list list1 list2)))
-          (list->tree list12)))))
+  (let ((list1 (tree->list-2 set1))
+		(list2 (tree->list-2 set2)))
+	(let ((list12 (intersection-set-list list1 list2)))
+	  (list->tree list12))))
 
 
 (define (union-set-list set1 set2)
@@ -133,9 +128,9 @@
       '()
       (let ((x1 (car set1)) (x2 (car set2)))
         (cond ((= x1 x2)
-               (cons x1
-                     (intersection-set-list (cdr set1)
-                                       (cdr set2))))
+               (cons x1 (intersection-set-list
+						 (cdr set1)
+						 (cdr set2))))
               ((< x1 x2)
                (intersection-set-list (cdr set1) set2))
               ((< x2 x1)

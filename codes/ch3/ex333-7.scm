@@ -269,6 +269,14 @@
     (multiplier x d z)
     z))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;; Another simpler version of c/
+;; (define (c/ x y)
+;;   (let ((z (make-connector)))
+;;     (multiplier z y x)
+;;     z))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (define C (make-connector))
 (define F (celsius-fahrenheit-converter C))
 
