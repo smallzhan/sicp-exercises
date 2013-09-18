@@ -28,7 +28,7 @@
 
 (define (testint x y)
   (<= (+ (square (- x 5))
-	 (square (- y 7)))
+         (square (- y 7)))
       9))
 
 ;(define (int) (test testint 2 8 4 10))

@@ -14,8 +14,7 @@
 
 (define (integral-RC i v0 R C dt)
   (define int-RC
-    (cons-stream v0
-                 (stream-map (lambda (x) (/ x C) (add-streams i int-RC)))))
+    (integral (scale-stream i (/ 1 C) v0 dt))
   (add-streams int-RC
                (stream-scale i R)))
 
