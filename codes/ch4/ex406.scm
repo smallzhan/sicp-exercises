@@ -2,7 +2,7 @@
 ;;;;;;;;;;;;;;;;
 (define (let->combination clause)
   (let ((func (make-lambda
-               (lambda-parameters (let-pairs clause))
+               (let-parameters (let-pairs clause))
                (let-body clause)))
         (exps (let-exps (let-pairs clause))))
     (cons func exps)))
@@ -27,7 +27,7 @@
   (car clause))
 
 (define (let-body clause)
-  (cadr clause))
+  (cdr clause))
 
 
 
