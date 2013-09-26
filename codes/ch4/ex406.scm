@@ -1,10 +1,10 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;
-(define (let->combination clause)
+(define (let->combination exp)
   (let ((func (make-lambda
-               (let-parameters (let-pairs clause))
-               (let-body clause)))
-        (exps (let-exps (let-pairs clause))))
+               (let-parameters (let-pairs exp))
+               (let-body exp)))
+        (exps (let-exps (let-pairs exp))))
     (cons func exps)))
 
 (define (let-var pair)
@@ -14,7 +14,7 @@
   (cadr pair))
 
 (define (eval-let exp env)
-  (eval (let->combination (let-clause exp))) env)
+  (eval (let->combination exp)) env)
 
 
 (define (let? exp)
@@ -23,11 +23,11 @@
 (define (let-clause exp)
   (cdr exp))
 
-(define (let-pairs clause)
-  (car clause))
+(define (let-pairs exp)
+  (cadr exp))
 
-(define (let-body clause)
-  (cdr clause))
+(define (let-body exp)
+  (cddr exp))
 
 
 
