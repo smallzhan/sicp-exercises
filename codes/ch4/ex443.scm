@@ -1,0 +1,20 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;; 想办法表示好可能更好。这个表示又拿给了很多深层次的推理。
+(define (multiple-houseboat)
+  (let ((moore 'maryann)
+        (barnacle 'melissa)
+        (downing (amb 'gabrielle 'rosalind 'lorna))
+        (hall (amb 'gabrielle 'lorna))
+        (parker (amb 'rosalind)))
+    (require (distinct? moore barnacle downing hall parker))
+    (require (not (= hall 'lorna)))
+    (define (find-lorna-father list)
+      (if (eq? 'lorna (cadr (car list)))
+          (caar list)
+          (find-lorna-father (cdr list))
+    (find-lorna-father
+     (list (list 'moore moore)
+           (list 'barnacle barnacle)
+           (list 'downing downing)
+           (list 'hall hall)
+           (list 'parker parker)))))
